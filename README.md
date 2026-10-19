@@ -26,7 +26,7 @@ uses any graphics card (NVIDIA, AMD, Intel, Apple), and works fully offline afte
 The AI invents believable detail, not the true detail: tiny text or far-away people can
 look a little strange. It cannot fix an out-of-focus image.
 
-## Use it (for the architect)
+## Download and use
 
 Download the app for your computer from the project's releases / pipeline artifacts and unzip it.
 
