@@ -2,7 +2,7 @@
 
 Examples:
     python -m render_upscaler cli render.jpg
-    python -m render_upscaler cli ./renders --scale 2 --denoise 30 --format jpg
+    python -m render_upscaler cli ./photos --scale 2 --denoise 30 --format jpg
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from .pipeline import OUTPUT_FORMATS, SCALES, Settings, collect_images, process_
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="render-upscaler", description="AI upscaling for architectural renders.")
+    p = argparse.ArgumentParser(prog="render-upscaler", description="AI image upscaler for photos, renders and artwork.")
     p.add_argument("inputs", nargs="*", help="image files and/or folders")
     p.add_argument("-o", "--output", help="output folder (default: 'upscaled' next to each image)")
     p.add_argument("-s", "--scale", type=int, choices=SCALES, default=4)

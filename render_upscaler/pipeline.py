@@ -31,7 +31,7 @@ SCALES = (2, 3, 4, 8)
 MAX_OUTPUT_MEGAPIXELS = 400  # protects against running out of memory
 TILE_FALLBACKS = (0, 256, 128, 64)  # 0 = engine picks automatically
 
-Image.MAX_IMAGE_PIXELS = None  # renders can be very large; we enforce our own limit
+Image.MAX_IMAGE_PIXELS = None  # images can be very large; we enforce our own limit
 
 ProgressFn = Callable[[float, str], None]
 

@@ -1,30 +1,30 @@
 # Render Upscaler
 
-A desktop app that makes low-resolution architectural renders sharp and large
+A desktop app that makes low-resolution images (photos, 3D renders, artwork, screenshots) sharp and large
 (2×, 3×, 4× or 8×) with AI. Runs on **Windows, macOS (Intel and Apple Silicon) and Linux**,
 uses any graphics card (NVIDIA, AMD, Intel, Apple), and works fully offline after the first start.
 
-- Drag and drop renders, or a whole folder (batch)
+- Drag and drop images, or a whole folder (batch)
 - Before / after viewer with a slider and zoom
-- Noise removal for grainy fast renders, final sharpening
+- Noise removal for grainy photos and renders, final sharpening
 - Saves PNG, JPG, WEBP or TIFF, keeps color profile, adjusts DPI so print size stays the same
 - Also a command-line mode for scripts
 
 ## How it works
 
-1. **Remove noise (optional).** Render grain and JPEG noise are removed first, so the AI
+1. **Remove noise (optional).** Grain and JPEG noise are removed first, so the AI
    doesn't enlarge them.
 2. **AI upscale.** The Real-ESRGAN neural network was trained on millions of pairs of
-   sharp images and the same images made small and dirty. It recognises edges, window frames,
-   tiles, brick, foliage and redraws them at 4× the size, instead of just stretching pixels.
+   sharp images and the same images made small and dirty. It recognises edges, textures, foliage,
+   fabric and hair and redraws them at 4× the size, instead of just stretching pixels.
    For 2× and 3× the app runs 4× and shrinks with a high-quality filter (cleaner than a native
    2× model). For 8× it runs the AI twice.
 3. **Tiles.** Big images are cut into tiles that fit in graphics memory and joined back.
    If the card runs out of memory the app retries with smaller tiles automatically.
 4. **Sharpen and save.**
 
-The AI invents believable detail, not the true detail: tiny text or far-away people can
-look a little strange. It cannot fix an out-of-focus image.
+The AI invents believable detail, not the true detail: tiny text and small faces in the
+background can look a little artificial. It cannot fix an out-of-focus or motion-blurred photo.
 
 ## Download and use
 
@@ -36,22 +36,22 @@ Download the app for your computer from the project's releases / pipeline artifa
   (the app isn't notarized by Apple).
 - **Linux:** unpack, run `./Render Upscaler/Render Upscaler`.
 
-Then: drop renders in → pick **Enlarge** → press **Upscale**. Results go to an `upscaled`
+Then: drop images in → pick **Enlarge** → press **Upscale**. Results go to an `upscaled`
 folder next to the originals (or a folder you choose).
 
 ### Good settings
 
-| Render type | Model | Remove noise | Sharpen |
+| Image type | Model | Remove noise | Sharpen |
 |---|---|---|---|
-| Normal exterior / interior render | Renders & photos | Off – 15 | 20 – 30 |
-| Fast, grainy render (low samples) | Renders & photos | 25 – 45 | 15 – 25 |
-| Compressed JPG from WhatsApp/Telegram | Renders & photos | 10 – 25 | 20 – 30 |
-| Plans, sections, diagrams | Flat graphics | Off | 10 – 20 |
+| Normal photo or 3D render | Photos & realistic | Off – 15 | 20 – 30 |
+| Grainy photo (low light) or fast render | Photos & realistic | 25 – 45 | 15 – 25 |
+| Compressed JPG from WhatsApp/Telegram | Photos & realistic | 10 – 25 | 20 – 30 |
+| Illustrations, logos, line art, screenshots | Drawings & graphics | Off | 10 – 20 |
 
 *Max quality* is about 8× slower and only slightly cleaner; use it for the final hero image.
 
-Tip: the best result is always a higher-resolution render. The upscaler is for when
-re-rendering would take too long, or the original scene is gone.
+Tip: the best result is always a higher-resolution original. The upscaler is for when
+you only have the small version, or making a new one would take too long.
 
 ## Run from source (developers)
 
@@ -84,8 +84,8 @@ Linux needs a Vulkan driver (`sudo apt install mesa-vulkan-drivers`, or the NVID
 ### Command line
 
 ```bash
-python app.py cli render.jpg                       # 4x, PNG
-python app.py cli ./renders --scale 2 --denoise 30 --format jpg -o ./out
+python app.py cli photo.jpg                        # 4x, PNG
+python app.py cli ./photos --scale 2 --denoise 30 --format jpg -o ./out
 python app.py cli --help
 ```
 

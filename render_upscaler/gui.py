@@ -117,7 +117,7 @@ class CompareView(QWidget):
             f.setPointSize(f.pointSize() + 2)
             p.setFont(f)
             p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,
-                       "Drop renders here\n\nor use “+ Images” on the left")
+                       "Drop images here\n\nor use “+ Images” on the left")
             return
 
         r = self._target_rect()
@@ -333,7 +333,7 @@ class MainWindow(QMainWindow):
 
         title = QLabel(APP_NAME)
         title.setObjectName("title")
-        sub = QLabel("AI upscaling for architectural renders")
+        sub = QLabel("AI upscaling for photos, renders and artwork")
         sub.setObjectName("subtitle")
         sl.addWidget(title)
         sl.addWidget(sub)
@@ -390,7 +390,7 @@ class MainWindow(QMainWindow):
         form.addRow("Enlarge", scale_row)
 
         self.denoise = LabeledSlider(0, "Removes render grain and JPEG noise before upscaling. "
-                                        "Use 20–40 for noisy fast renders.")
+                                        "Use 20–40 for noisy photos or grainy renders.")
         form.addRow("Remove noise", self.denoise)
         self.sharpen = LabeledSlider(25, "Light final sharpening for crisp edges.")
         form.addRow("Sharpen", self.sharpen)
@@ -455,7 +455,7 @@ class MainWindow(QMainWindow):
         self.progress.setRange(0, 1000)
         self.progress.setTextVisible(False)
         self.progress.setFixedHeight(6)
-        self.status = QLabel("Add renders to begin.")
+        self.status = QLabel("Add images to begin.")
         self.status.setObjectName("muted")
         self.status.setWordWrap(True)
         run_row = QHBoxLayout()
@@ -542,7 +542,7 @@ class MainWindow(QMainWindow):
 
     def set_output_dir(self, path: Optional[str]):
         self.output_dir = path or None
-        self.out_label.setText(path if path else "Next to originals")
+        self.out_label.setText(path if path else "Same folder")
 
     def choose_output(self):
         d = QFileDialog.getExistingDirectory(self, "Save results to", self.output_dir or str(Path.home()))
@@ -553,7 +553,7 @@ class MainWindow(QMainWindow):
     def ensure_engine(self):
         self.engine_dir = eng.find_engine()
         if self.engine_dir:
-            self.status.setText("Ready. Add renders, choose settings, press Upscale.")
+            self.status.setText("Ready. Add images, choose settings, press Upscale.")
             return
         ans = QMessageBox.question(
             self, "One-time setup",
@@ -620,14 +620,14 @@ class MainWindow(QMainWindow):
 
     def add_files_dialog(self):
         exts = " ".join(f"*{e}" for e in sorted(SUPPORTED_INPUT))
-        files, _ = QFileDialog.getOpenFileNames(self, "Add renders", self.store.value("last_dir", str(Path.home())),
+        files, _ = QFileDialog.getOpenFileNames(self, "Add images", self.store.value("last_dir", str(Path.home())),
                                                 f"Images ({exts})")
         if files:
             self.store.setValue("last_dir", str(Path(files[0]).parent))
             self.add_paths(files)
 
     def add_folder_dialog(self):
-        d = QFileDialog.getExistingDirectory(self, "Add a folder of renders",
+        d = QFileDialog.getExistingDirectory(self, "Add a folder of images",
                                              self.store.value("last_dir", str(Path.home())))
         if d:
             self.store.setValue("last_dir", d)
@@ -679,7 +679,7 @@ class MainWindow(QMainWindow):
         rows = [self.list.row(i) for i in self.list.selectedItems()] if len(self.list.selectedItems()) > 1 else []
         rows = rows or list(range(self.list.count()))
         if not rows:
-            self.status.setText("Add some renders first.")
+            self.status.setText("Add some images first.")
             return
         self._save_settings()
         settings = self.current_settings()

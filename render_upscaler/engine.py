@@ -44,15 +44,15 @@ MODELS = {
         "render",
         "realesrgan-x4plus",
         4,
-        "Renders & photos",
-        "Best for 3D renders, interiors, exteriors and real photos.",
+        "Photos & realistic",
+        "Best for photos, 3D renders and any realistic image.",
     ),
     "graphics": Model(
         "graphics",
         "realesrgan-x4plus-anime",
         4,
-        "Plans & diagrams",
-        "Best for clean line drawings, plans, sections and flat-color diagrams.",
+        "Drawings & graphics",
+        "Best for illustrations, line art, logos, screenshots and flat-color graphics.",
     ),
 }
 
