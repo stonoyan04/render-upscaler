@@ -1,0 +1,74 @@
+# Tests on every push. Builds the Windows, macOS and Linux apps when you push a
+# version tag (git tag v1.0.0 && git push --tags) and attaches them to a GitHub Release.
+# You can also start it by hand: Actions tab -> Build -> Run workflow.
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Qt system libraries
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libegl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+      - run: pip install -r requirements.txt pytest
+      - run: QT_QPA_PLATFORM=offscreen python -c "import render_upscaler.gui"
+      - run: python -m pytest -q
+
+  build:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            file: dist/*.zip
+          - os: macos-latest        # Apple Silicon (M1/M2/M3/M4)
+            file: dist/*.zip
+          - os: ubuntu-22.04        # older base = works on more Linux versions
+            file: dist/*.tar.gz
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Qt system libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libegl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+      - run: pip install -r requirements.txt pyinstaller
+      - run: python build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RenderUpscaler-${{ runner.os }}
+          path: ${{ matrix.file }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: out/*
+          generate_release_notes: true
