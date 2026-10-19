@@ -28,13 +28,22 @@ background can look a little artificial. It cannot fix an out-of-focus or motion
 
 ## Download and use
 
-Download the app for your computer from the project's releases / pipeline artifacts and unzip it.
+Get the installer for your computer from the
+[Releases page](https://github.com/stonoyan04/render-upscaler/releases/latest):
 
-- **Windows:** open the folder, double-click `Render Upscaler.exe`.
-  If SmartScreen warns, click *More info → Run anyway* (the app isn't code-signed).
-- **macOS:** move `Render Upscaler.app` to Applications. The first time, **right-click → Open**
-  (the app isn't notarized by Apple).
-- **Linux:** unpack, run `./Render Upscaler/Render Upscaler`.
+| Computer | File | How to install |
+|---|---|---|
+| **Windows** 10/11 | `RenderUpscaler-…-windows-setup.exe` | Double-click and follow the steps. Adds a Start menu and desktop icon, and an uninstaller. No admin rights needed. |
+| **Mac** (M1 or newer) | `RenderUpscaler-…-macos.dmg` | Open it and drag **Render Upscaler** into **Applications**. |
+| **Linux** | `RenderUpscaler-…-linux-x86_64.AppImage` | Right-click → Properties → allow running as a program, then double-click. |
+
+There is also `…-windows-portable.zip` for Windows if you prefer not to install (unzip and run).
+On an Intel Mac, run from source instead (see below).
+
+**First start warnings.** The app isn't code-signed yet, so the system asks once:
+- Windows SmartScreen: click **More info → Run anyway**.
+- macOS: if it says the app can't be opened, go to **System Settings → Privacy & Security**,
+  scroll down and click **Open Anyway**.
 
 Then: drop images in → pick **Enlarge** → press **Upscale**. Results go to an `upscaled`
 folder next to the originals (or a folder you choose).
@@ -98,7 +107,8 @@ pip install -r requirements.txt pyinstaller
 python build.py
 ```
 
-The result (with the AI engine packed inside) is in `dist/`, plus a `.zip` / `.tar.gz` to share.
+The installer (with the AI engine packed inside) is written to `dist/`: a `-setup.exe` on Windows
+(needs [Inno Setup 6](https://jrsoftware.org/isinfo.php)), a `.dmg` on macOS, an `.AppImage` on Linux.
 
 **GitLab CI** (`.gitlab-ci.yml`) runs the tests on every push. Push a tag like `v1.0.0`
 (or start the jobs by hand) to build the **Linux** and **Windows** apps; download them from
@@ -114,7 +124,7 @@ render_upscaler/
   pipeline.py               denoise -> AI -> resize -> sharpen -> save
   gui.py                    the desktop window
   cli.py                    command-line version
-build.py                    makes the double-clickable app
+build.py                    makes the app and its installer
 tests/                      pytest tests
 ```
 
