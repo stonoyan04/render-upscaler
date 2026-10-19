@@ -1,0 +1,23 @@
+# AI engine is downloaded automatically (too big for git)
+engine/
+
+# Build output
+build/
+dist/
+*.spec
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.cache/
+
+# Results and test images
+upscaled/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

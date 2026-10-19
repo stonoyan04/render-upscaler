@@ -1,0 +1,58 @@
+# GitLab CI: tests on every push, app builds when you push a version tag (e.g. v1.0.0)
+# or when you start the build jobs by hand from the pipeline page.
+#
+# Linux and Windows run on GitLab's free shared runners.
+# macOS runners are a paid GitLab feature, so build the Mac app on a Mac:  python build.py
+
+stages: [test, build]
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths: [.cache/pip]
+
+test:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq libgl1 libegl1 libglib2.0-0 libxkbcommon0 libfontconfig1 libdbus-1-3 > /dev/null
+    - pip install -q -r requirements.txt pytest
+  script:
+    - QT_QPA_PLATFORM=offscreen python -c "import render_upscaler.gui"
+    - python -m pytest -q
+
+.build_rules: &build_rules
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+/
+    - when: manual
+      allow_failure: true
+
+build-linux:
+  stage: build
+  image: python:3.11
+  <<: *build_rules
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq libgl1 libegl1 libxkbcommon0 libfontconfig1 libdbus-1-3 > /dev/null
+    - pip install -q -r requirements.txt pyinstaller
+  script:
+    - python build.py
+  artifacts:
+    name: "RenderUpscaler-linux"
+    paths: [dist/*.tar.gz]
+    expire_in: 30 days
+
+build-windows:
+  stage: build
+  tags: [saas-windows-medium-amd64]
+  <<: *build_rules
+  before_script:
+    - choco install python311 -y --no-progress
+    - $env:Path = "C:\Python311;C:\Python311\Scripts;$env:Path"
+    - python -m pip install -q -r requirements.txt pyinstaller
+  script:
+    - python build.py
+  artifacts:
+    name: "RenderUpscaler-windows"
+    paths: [dist/*.zip]
+    expire_in: 30 days
